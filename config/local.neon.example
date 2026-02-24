@@ -1,0 +1,7 @@
+parameters:
+    database:
+        dsn: 'mysql:host=127.0.0.1;port=3306;dbname=NAZEV_DATABAZE;charset=utf8mb4'
+        user: 'UZIVATEL_DB'
+        password: 'HESLO_DB'
+        options:
+            1007: false

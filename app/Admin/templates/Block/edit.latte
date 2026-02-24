@@ -1,0 +1,212 @@
+{layout '../@layout.latte'}
+
+{block title}{if $block}Upravit blok{else}Nový blok{/if}{/block}
+
+{block content}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a n:href="default" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+    <h2 class="h4 mb-0">
+        {if $block}<i class="bi bi-pencil-fill me-2 text-primary"></i>Upravit blok
+        {else}<i class="bi bi-plus-circle-fill me-2 text-primary"></i>Nový blok
+        {/if}
+    </h2>
+</div>
+
+<div class="row g-4">
+<div class="col-lg-7">
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+
+{* --- FORM --- *}
+<form n:name="editForm" class="needs-validation" novalidate>
+    <input n:name="id" type="hidden">
+
+    <div class="mb-3">
+        <label for="frm-editForm-text" class="form-label fw-semibold">Text / popis bloku</label>
+        <input n:name="text" id="frm-editForm-text" placeholder="např. Maminka, Přinést, Jídlo...">
+        <div class="invalid-feedback"></div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Typ bloku</label>
+        <select n:name="block_type"></select>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Skupina</label>
+        <select n:name="group_id">
+        </select>
+    </div>
+
+    {* Image section *}
+    <div class="mb-4">
+        <label class="form-label fw-semibold">Obrázek</label>
+
+        {* Preview *}
+        <div id="image-preview-wrap" class="mb-2 {if !$block || !$block->image_path}d-none{/if}">
+            <img id="image-preview" src="{if $block && $block->image_path}/{$block->image_path}{/if}"
+                 alt="Náhled" class="rounded border" style="max-height:120px;max-width:200px;">
+            <button type="button" class="btn btn-sm btn-outline-danger ms-2" id="btn-remove-image">
+                <i class="bi bi-x-lg"></i> Odebrat
+            </button>
+        </div>
+
+        <ul class="nav nav-tabs mb-3" id="imageTabs">
+            <li class="nav-item">
+                <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-img-upload">
+                    <i class="bi bi-upload"></i> Soubor
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-img-webcam">
+                    <i class="bi bi-camera-fill"></i> Fotoaparát
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-img-arasaac">
+                    <i class="bi bi-search"></i> ARASAAC
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content border rounded p-3 bg-light">
+            <div class="tab-pane fade show active" id="tab-img-upload">
+                <input n:name="image_file" accept="image/*">
+                <div class="form-text">Povolené formáty: JPG, PNG, GIF, WebP, SVG</div>
+            </div>
+            <div class="tab-pane fade" id="tab-img-webcam">
+                <div class="d-flex gap-2 mb-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btn-webcam-start">
+                        <i class="bi bi-camera-video-fill"></i> Spustit kameru
+                    </button>
+                    <button type="button" class="btn btn-sm btn-success d-none" id="btn-webcam-capture">
+                        <i class="bi bi-camera-fill"></i> Pořídit snímek
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-danger d-none" id="btn-webcam-stop">
+                        <i class="bi bi-stop-fill"></i> Zastavit
+                    </button>
+                </div>
+                <video id="webcam-video" autoplay muted class="rounded d-none" style="max-width:300px;"></video>
+                <canvas id="webcam-canvas" class="d-none"></canvas>
+            </div>
+            <div class="tab-pane fade" id="tab-img-arasaac">
+                <div class="input-group mb-2">
+                    <input type="text" id="arasaac-search-input" class="form-control"
+                           placeholder="Hledat piktogram... (cs)">
+                    <button type="button" class="btn btn-outline-primary" id="btn-arasaac-search">
+                        <i class="bi bi-search"></i> Hledat
+                    </button>
+                </div>
+                <div id="arasaac-results" class="d-flex flex-wrap gap-2 mt-2" style="max-height:200px;overflow-y:auto;"></div>
+                <div id="arasaac-selected" class="mt-2 text-muted small"></div>
+            </div>
+        </div>
+
+        <input n:name="image_base64" type="hidden" id="input-image-base64">
+        <input n:name="arasaac_id" type="hidden" id="input-arasaac-id">
+    </div>
+
+    {* Audio section *}
+    <div class="mb-4">
+        <label class="form-label fw-semibold">Zvuk</label>
+
+        {* Current audio preview *}
+        {if $block && $block->audio_path}
+        <div class="mb-2">
+            <audio controls src="/{$block->audio_path}" class="w-100"></audio>
+        </div>
+        {/if}
+
+        <ul class="nav nav-tabs mb-3" id="audioTabs">
+            <li class="nav-item">
+                <button type="button" class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-audio-upload">
+                    <i class="bi bi-upload"></i> Soubor
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-audio-record">
+                    <i class="bi bi-mic-fill"></i> Nahrát
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-audio-tts">
+                    <i class="bi bi-volume-up-fill"></i> TTS náhled
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content border rounded p-3 bg-light">
+            <div class="tab-pane fade show active" id="tab-audio-upload">
+                <input n:name="audio_file" accept="audio/*">
+                <div class="form-text">Povolené formáty: MP3, OGG, WebM, WAV, M4A</div>
+            </div>
+            <div class="tab-pane fade" id="tab-audio-record">
+                <div class="d-flex gap-2 mb-2 align-items-center">
+                    <button type="button" class="btn btn-sm btn-danger" id="btn-record-start">
+                        <i class="bi bi-record-fill"></i> Nahrávat
+                    </button>
+                    <button type="button" class="btn btn-sm btn-secondary d-none" id="btn-record-stop">
+                        <i class="bi bi-stop-fill"></i> Zastavit
+                    </button>
+                    <span id="record-status" class="text-muted small"></span>
+                </div>
+                <audio id="audio-preview" controls class="d-none w-100"></audio>
+            </div>
+            <div class="tab-pane fade" id="tab-audio-tts">
+                <p class="text-muted small">Přehrát text bloku pomocí hlasové syntézy (pouze náhled, neukládá se).</p>
+                <button type="button" class="btn btn-sm btn-outline-primary" id="btn-tts-preview">
+                    <i class="bi bi-volume-up-fill"></i> Přehrát TTS
+                </button>
+            </div>
+        </div>
+
+        <input n:name="audio_base64" type="hidden" id="input-audio-base64">
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg"></i> Uložit blok
+        </button>
+        <a n:href="default" class="btn btn-outline-secondary">Zrušit</a>
+    </div>
+
+</form>
+
+</div>
+</div>
+</div>
+
+<div class="col-lg-5">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h6 class="card-title">Tipy</h6>
+            <ul class="small text-muted mb-0">
+                <li class="mb-1">Text je povinný – zobrazuje se pod obrázkem.</li>
+                <li class="mb-1"><strong>ARASAAC</strong> – bezplatné AAC piktogramy speciálně pro komunikační pomůcky.</li>
+                <li class="mb-1">Webcam – pořiďte fotografii přímo v prohlížeči.</li>
+                <li class="mb-1">Zvuk – nahrávejte mikrofonem nebo uploadujte soubor.</li>
+                <li class="mb-1">TTS – přehrání textu (při použití dítětem závisí na hlasech tabletu).</li>
+                <li>Typ bloku určuje pravidlo "stejný typ 2x za sebou".</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+</div>
+{/block}
+
+{block scripts}
+<script src="/js/admin-arasaac.js"></script>
+<script src="/js/admin-audio.js"></script>
+<script>
+// Pass text value to TTS button
+document.getElementById('btn-tts-preview')?.addEventListener('click', function() {
+    const text = document.querySelector('[name="text"]')?.value || '';
+    if (!text) return;
+    speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = 'cs-CZ';
+    speechSynthesis.speak(utt);
+});
+</script>
+{/block}

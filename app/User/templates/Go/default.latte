@@ -1,0 +1,17 @@
+{layout '../@layout.latte'}
+
+{block content}
+<div id="app">
+    <!-- Block grid area -->
+    <div id="block-grid" role="main" aria-label="Komunikační bloky"></div>
+
+    <!-- Fixed sentence bar at bottom -->
+    <div id="sentence-bar" role="region" aria-label="Sestavená věta">
+        <div id="sentence-blocks"></div>
+        <div id="sentence-controls"></div>
+    </div>
+</div>
+
+<!-- App data: blocks, groups, settings for JS -->
+<script id="app-data" type="application/json">{$appData|noescape}</script>
+{/block}

@@ -1,0 +1,428 @@
+/* ================================================================
+   Eliskapp – User / Tablet UI CSS
+   Optimized for touch: large targets, rounded corners, shadows,
+   soft gradients. No Bootstrap dependency.
+   ================================================================ */
+
+/* ----------------------------------------------------------------
+   Reset & base
+   ---------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.user-body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(145deg, #f0f4f8 0%, #e8edf5 100%);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ----------------------------------------------------------------
+   App container
+   ---------------------------------------------------------------- */
+#app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ----------------------------------------------------------------
+   Block grid area
+   ---------------------------------------------------------------- */
+#block-grid {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+
+.grid-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-content: flex-start;
+}
+
+/* ----------------------------------------------------------------
+   Base tile (shared by blocks and groups)
+   ---------------------------------------------------------------- */
+.tile {
+    width: 120px;
+    height: 130px;
+    border: none;
+    border-radius: 18px;
+    padding: 8px 6px 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.08);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.2s;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.tile:active {
+    transform: scale(0.93);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.tile img {
+    width: 76px;
+    height: 76px;
+    object-fit: contain;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.tile-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    color: #2d3748;
+    margin-top: 4px;
+    line-height: 1.2;
+    max-height: 2.4em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 100%;
+}
+
+.tile-no-image {
+    width: 76px;
+    height: 76px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------------
+   Block tile
+   ---------------------------------------------------------------- */
+.tile-block {
+    background: linear-gradient(145deg, #ffffff 0%, #f7f9fc 100%);
+}
+
+.tile-block--disabled {
+    opacity: 0.3;
+    filter: grayscale(80%);
+    pointer-events: none;
+    cursor: default;
+}
+
+.tile-block--in-group {
+    background: color-mix(in srgb, var(--group-bg, #4A90D9) 15%, #fff);
+    border: 2px solid color-mix(in srgb, var(--group-bg, #4A90D9) 40%, transparent);
+}
+
+/* ----------------------------------------------------------------
+   Group tile
+   ---------------------------------------------------------------- */
+.tile-group {
+    background: linear-gradient(145deg,
+        color-mix(in srgb, var(--group-bg, #4A90D9) 85%, white) 0%,
+        color-mix(in srgb, var(--group-bg, #4A90D9) 70%, white) 100%
+    );
+    border: 2px solid color-mix(in srgb, var(--group-bg, #4A90D9) 60%, transparent);
+}
+
+.tile-group .tile-label {
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.tile-group--expanded {
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.8), 0 4px 16px rgba(0,0,0,0.2);
+}
+
+/* Mini grid inside group tile */
+.group-mini-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    width: 76px;
+    height: 76px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+}
+
+.group-mini-cell {
+    background: rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.group-mini-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+/* ----------------------------------------------------------------
+   Expanded group row
+   ---------------------------------------------------------------- */
+.grid-expanded-row {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 18px;
+    background: color-mix(in srgb, var(--group-bg, #4A90D9) 12%, white);
+    border: 2px solid color-mix(in srgb, var(--group-bg, #4A90D9) 30%, transparent);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.35s ease,
+                opacity 0.25s ease;
+    opacity: 0;
+}
+
+.grid-expanded-row.expanded {
+    max-height: 800px;
+    opacity: 1;
+}
+
+/* ----------------------------------------------------------------
+   Sentence bar (fixed bottom)
+   ---------------------------------------------------------------- */
+#sentence-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(145deg, #ffffff 0%, #f0f2f5 100%);
+    border-top: 2px solid #dde2ea;
+    padding: 8px 10px;
+    min-height: 110px;
+    max-height: 110px;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+    gap: 8px;
+    overflow: hidden;
+}
+
+#sentence-blocks {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    align-items: center;
+}
+
+#sentence-controls {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+/* ----------------------------------------------------------------
+   Sentence tiles
+   ---------------------------------------------------------------- */
+.sentence-tile {
+    width: 80px;
+    height: 90px;
+    border: 2px solid #dde2ea;
+    border-radius: 14px;
+    padding: 4px 3px 3px;
+    cursor: pointer;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.1s;
+    outline: none;
+}
+
+.sentence-tile:active {
+    transform: scale(0.9);
+}
+
+.sentence-tile img {
+    width: 52px;
+    height: 52px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.sentence-tile-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    color: #2d3748;
+    margin-top: 2px;
+    max-height: 2em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 1.1;
+    width: 100%;
+}
+
+/* Last block in sentence: thick red border */
+.sentence-tile--last {
+    border: 3px solid #e53e3e;
+    box-shadow: 0 0 0 2px rgba(229,62,62,0.25), 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.tile-no-image--small {
+    width: 52px;
+    height: 52px;
+    font-size: 1.3rem;
+    border-radius: 8px;
+}
+
+/* ----------------------------------------------------------------
+   Sentence control buttons
+   ---------------------------------------------------------------- */
+.sentence-btn {
+    width: 68px;
+    height: 68px;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    outline: none;
+    flex-shrink: 0;
+}
+
+.sentence-btn:active {
+    transform: scale(0.9);
+}
+
+.sentence-btn-play {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(72,187,120,0.5);
+}
+
+.sentence-btn-play:hover {
+    box-shadow: 0 4px 16px rgba(72,187,120,0.7);
+}
+
+.sentence-btn-reset {
+    background: linear-gradient(135deg, #fc8181 0%, #e53e3e 100%);
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(229,62,62,0.4);
+}
+
+.sentence-btn-reset:hover {
+    box-shadow: 0 4px 16px rgba(229,62,62,0.6);
+}
+
+/* ----------------------------------------------------------------
+   Responsive adjustments for smaller tablets / phones
+   ---------------------------------------------------------------- */
+@media (max-width: 600px) {
+    .tile {
+        width: 100px;
+        height: 110px;
+    }
+
+    .tile img,
+    .group-mini-grid,
+    .tile-no-image {
+        width: 62px;
+        height: 62px;
+    }
+
+    .group-mini-grid {
+        width: 62px;
+        height: 62px;
+    }
+
+    .tile-label {
+        font-size: 11px;
+    }
+
+    #block-grid {
+        padding: 10px;
+    }
+
+    .grid-row {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .tile {
+        width: 88px;
+        height: 100px;
+    }
+    .tile img,
+    .tile-no-image {
+        width: 54px;
+        height: 54px;
+    }
+    .group-mini-grid {
+        width: 54px;
+        height: 54px;
+    }
+}
+
+/* ----------------------------------------------------------------
+   Landscape orientation (wider grid)
+   ---------------------------------------------------------------- */
+@media (orientation: landscape) and (max-height: 500px) {
+    #sentence-bar {
+        min-height: 90px;
+        max-height: 90px;
+    }
+
+    .sentence-tile {
+        width: 70px;
+        height: 80px;
+    }
+
+    .sentence-tile img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .sentence-btn {
+        width: 58px;
+        height: 58px;
+    }
+}

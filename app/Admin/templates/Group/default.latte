@@ -1,0 +1,57 @@
+{layout '../@layout.latte'}
+
+{block title}Skupiny{/block}
+
+{block content}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0"><i class="bi bi-folder-fill me-2 text-success"></i>Skupiny</h2>
+    <a n:href="edit" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Přidat skupinu
+    </a>
+</div>
+
+{define renderGroup, $groups, $depth}
+    {foreach $groups as $g}
+    <div class="group-row d-flex align-items-center gap-3 p-3 border-bottom"
+         data-id="{$g['id']}">
+        <span class="drag-handle text-muted" title="Přetáhnout">
+            <i class="bi bi-grip-vertical"></i>
+        </span>
+        <span class="group-color-swatch rounded" style="width:20px;height:20px;background:{$g['bg_color']};display:inline-block;flex-shrink:0;"></span>
+        <span class="fw-semibold flex-grow-1">{$g['name']}</span>
+        <span class="small text-muted me-2">ID: {$g['id']}</span>
+        <div class="d-flex gap-1">
+            <a n:href="edit, id: $g['id']" class="btn btn-sm btn-outline-secondary" title="Upravit">
+                <i class="bi bi-pencil"></i>
+            </a>
+            <button class="btn btn-sm btn-outline-danger btn-delete-group"
+                    data-id="{$g['id']}" data-name="{$g['name']}" title="Smazat">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    </div>
+    {if $g['children']}
+        {include renderGroup, groups: $g['children'], depth: $depth + 1}
+    {/if}
+    {/foreach}
+{/define}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {if count($tree) > 0}
+        <div id="group-list">
+            {include renderGroup, groups: $tree, depth: 0}
+        </div>
+        {else}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-folder fs-1 d-block mb-2"></i>
+            Žádné skupiny. <a n:href="edit">Přidejte první skupinu.</a>
+        </div>
+        {/if}
+    </div>
+</div>
+{/block}
+
+{block scripts}
+<script src="/js/admin-groups.js"></script>
+{/block}

@@ -1,0 +1,26 @@
+application:
+    errorPresenter: Admin:Error
+    mapping:
+        Admin: App\Admin\Presenters\*Presenter
+        User: App\User\Presenters\*Presenter
+
+session:
+    expiration: 14 days
+    autoStart: true
+    savePath: %tempDir%/sessions
+
+database:
+    dsn: %database.dsn%
+    user: %database.user%
+    password: %database.password%
+    options:
+        lazy: true
+
+services:
+    router: App\Router\RouterFactory::createRouter
+    authenticator: App\Model\UserRepository
+    - App\Model\BlockRepository
+    - App\Model\BlockGroupRepository
+    - App\Model\SettingsRepository
+    - App\Model\FileUploadService(%wwwDir%)
+    - App\Model\ArasaacService

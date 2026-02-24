@@ -1,0 +1,82 @@
+{layout '../@layout.latte'}
+
+{block title}Uživatelé{/block}
+
+{block content}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0"><i class="bi bi-people-fill me-2 text-info"></i>Správa uživatelů</h2>
+    <a n:href="edit" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Přidat uživatele
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>UID</th>
+                    <th>Uživatelské jméno</th>
+                    <th>Zobrazované jméno</th>
+                    <th>Poslední přihlášení</th>
+                    <th>Aktivní</th>
+                    <th>Odkaz</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {foreach $users as $u}
+                <tr>
+                    <td><code class="small">{$u->uid}</code></td>
+                    <td><strong>{$u->username}</strong></td>
+                    <td>{$u->display_name}</td>
+                    <td class="text-muted small">
+                        {if $u->last_login}{$u->last_login|date:'d.m.Y H:i'}{else}nikdy{/if}
+                    </td>
+                    <td>
+                        {if $u->is_active}
+                            <span class="badge bg-success">Ano</span>
+                        {else}
+                            <span class="badge bg-secondary">Ne</span>
+                        {/if}
+                    </td>
+                    <td>
+                        <a href="/go/{$u->uid}" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-eye-fill"></i>
+                        </a>
+                    </td>
+                    <td class="text-end">
+                        <a n:href="edit, uid: $u->uid" class="btn btn-sm btn-outline-secondary me-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        {if $u->uid !== $userUid}
+                        <button class="btn btn-sm btn-outline-danger btn-delete-user"
+                                data-uid="{$u->uid}" data-name="{$u->username}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        {/if}
+                    </td>
+                </tr>
+                {/foreach}
+            </tbody>
+        </table>
+    </div>
+</div>
+{/block}
+
+{block scripts}
+<script>
+document.querySelectorAll('.btn-delete-user').forEach(btn => {
+    btn.addEventListener('click', function() {
+        if (!confirm('Opravdu smazat uživatele "' + this.dataset.name + '"? Smaže se i veškerý jeho obsah!')) return;
+        fetch('?do=deleteUser&uid=' + encodeURIComponent(this.dataset.uid), {
+            method: 'POST',
+            headers: {'X-Requested-With': 'XMLHttpRequest'}
+        }).then(r => r.json()).then(d => {
+            if (d.ok) location.reload();
+            else alert('Chyba: ' + (d.error || 'Neznámá chyba'));
+        });
+    });
+});
+</script>
+{/block}

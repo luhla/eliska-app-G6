@@ -1,0 +1,65 @@
+{layout '../@layout.latte'}
+
+{block title}Knihovna bloků{/block}
+
+{block content}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h4 mb-0"><i class="bi bi-grid-3x3-gap-fill me-2 text-primary"></i>Knihovna bloků</h2>
+    <div class="d-flex gap-2">
+        <a n:href="Group:edit" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-folder-plus"></i> Nová skupina
+        </a>
+        <a n:href="edit" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg"></i> Nový blok
+        </a>
+    </div>
+</div>
+
+<div class="library-layout card border-0 shadow-sm">
+
+    {* LEFT: Group tree *}
+    <div class="library-tree" id="library-tree">
+        <div class="tree-root-node tree-node active" data-group-id="">
+            <span class="tree-toggle"></span>
+            <i class="bi bi-house-fill me-1 text-primary"></i>
+            <span>Kořen</span>
+        </div>
+        <ul id="tree-list" class="tree-list ps-0 mb-0"></ul>
+    </div>
+
+    {* RIGHT: Content panel *}
+    <div class="library-content" id="library-content">
+        <div class="library-breadcrumb px-3 py-2 border-bottom bg-light" id="breadcrumb">
+            <i class="bi bi-house-fill text-primary"></i> Kořen
+        </div>
+        <div id="item-list" class="library-item-list"></div>
+        <div id="empty-state" class="text-center text-muted py-5 d-none">
+            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+            Žádné položky. Přidejte skupinu nebo blok.
+        </div>
+    </div>
+
+</div>
+
+{* Context menu *}
+<div id="ctx-menu" class="ctx-menu d-none" role="menu">
+    <div class="ctx-menu-item" id="ctx-edit"><i class="bi bi-pencil me-2"></i>Upravit</div>
+    <div class="ctx-menu-item" id="ctx-move"><i class="bi bi-arrows-move me-2"></i>Přesunout do…</div>
+    <div class="ctx-menu-item" id="ctx-copy"><i class="bi bi-copy me-2"></i>Kopírovat do…</div>
+    <div class="ctx-menu-divider"></div>
+    <div class="ctx-menu-item text-danger" id="ctx-delete"><i class="bi bi-trash me-2"></i>Smazat</div>
+</div>
+
+{* Pending action banner *}
+<div id="pending-banner" class="pending-banner d-none">
+    <i class="bi bi-info-circle-fill me-2"></i>
+    <span id="pending-text"></span>
+    <button type="button" class="btn btn-sm btn-outline-light ms-3" id="btn-cancel-pending">Zrušit (Esc)</button>
+</div>
+{/block}
+
+{block scripts}
+<script id="tree-data" type="application/json">{$treeJson|noescape}</script>
+<script id="items-data" type="application/json">{$initialItems|noescape}</script>
+<script src="/js/admin-blocks.js"></script>
+{/block}

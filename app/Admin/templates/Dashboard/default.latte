@@ -1,0 +1,93 @@
+{layout '../@layout.latte'}
+
+{block title}Přehled{/block}
+
+{block content}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0"><i class="bi bi-house-fill me-2 text-primary"></i>Přehled</h2>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary-subtle text-primary rounded-3 p-3">
+                    <i class="bi bi-grid-3x3-gap-fill fs-3"></i>
+                </div>
+                <div>
+                    <div class="fs-2 fw-bold">{$blockCount}</div>
+                    <div class="text-muted small">Bloků celkem</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-success-subtle text-success rounded-3 p-3">
+                    <i class="bi bi-folder-fill fs-3"></i>
+                </div>
+                <div>
+                    <div class="fs-2 fw-bold">{$groupCount}</div>
+                    <div class="text-muted small">Skupin celkem</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="card-title"><i class="bi bi-link-45deg me-1"></i>Odkaz pro dítě</h5>
+        <p class="text-muted small mb-2">Sdílejte tento odkaz nebo ho otevřete na tabletu dítěte:</p>
+        <div class="input-group">
+            <input type="text" class="form-control font-monospace" id="userUrl"
+                   value="{$userUrl}" readonly>
+            <button class="btn btn-outline-secondary" onclick="copyUrl()">
+                <i class="bi bi-clipboard"></i> Kopírovat
+            </button>
+            <a href="{$userUrl}" target="_blank" class="btn btn-primary">
+                <i class="bi bi-eye-fill"></i> Otevřít
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-sm-6">
+        <a n:href="Block:edit" class="card card-link border-0 shadow-sm text-decoration-none">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-plus-circle-fill text-primary fs-2 mb-2 d-block"></i>
+                <div class="fw-semibold">Přidat blok</div>
+            </div>
+        </a>
+    </div>
+    <div class="col-sm-6">
+        <a n:href="Group:edit" class="card card-link border-0 shadow-sm text-decoration-none">
+            <div class="card-body text-center py-4">
+                <i class="bi bi-folder-plus text-success fs-2 mb-2 d-block"></i>
+                <div class="fw-semibold">Přidat skupinu</div>
+            </div>
+        </a>
+    </div>
+</div>
+{/block}
+
+{block scripts}
+<script>
+function copyUrl() {
+    const input = document.getElementById('userUrl');
+    navigator.clipboard.writeText(input.value).then(() => {
+        const btn = input.nextElementSibling;
+        btn.innerHTML = '<i class="bi bi-check-lg"></i> Zkopírováno';
+        btn.classList.add('btn-success');
+        btn.classList.remove('btn-outline-secondary');
+        setTimeout(() => {
+            btn.innerHTML = '<i class="bi bi-clipboard"></i> Kopírovat';
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-secondary');
+        }, 2000);
+    });
+}
+</script>
+{/block}

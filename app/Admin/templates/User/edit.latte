@@ -1,0 +1,70 @@
+{layout '../@layout.latte'}
+
+{block title}{if $editUser}Upravit uživatele{else}Nový uživatel{/if}{/block}
+
+{block content}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a n:href="default" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+    <h2 class="h4 mb-0">
+        {if $editUser}Upravit uživatele: <strong>{$editUser->username}</strong>
+        {else}Nový uživatel
+        {/if}
+    </h2>
+</div>
+
+<div class="row">
+<div class="col-lg-6">
+<div class="card border-0 shadow-sm">
+<div class="card-body">
+
+<form n:name="editForm">
+    <input n:name="uid" type="hidden">
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Uživatelské jméno</label>
+        <input n:name="username" placeholder="username">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Zobrazované jméno</label>
+        <input n:name="display_name" placeholder="Jan Novák">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-semibold">
+            Heslo
+            {if $editUser}<span class="text-muted small fw-normal">(ponechejte prázdné pro zachování stávajícího)</span>{/if}
+        </label>
+        <input n:name="password" type="password" placeholder="{if $editUser}••••••••{else}Zadejte heslo{/if}">
+    </div>
+
+    <div class="mb-4">
+        <div class="form-check">
+            <input n:name="is_active" type="checkbox" class="form-check-input" id="is_active">
+            <label class="form-check-label" for="is_active">Aktivní účet</label>
+        </div>
+    </div>
+
+    {if $editUser}
+    <div class="mb-3 p-2 bg-light rounded">
+        <div class="small text-muted">
+            <strong>UID:</strong> <code>{$editUser->uid}</code><br>
+            <strong>Odkaz pro dítě:</strong>
+            <a href="/go/{$editUser->uid}" target="_blank">/go/{$editUser->uid}</a>
+        </div>
+    </div>
+    {/if}
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg"></i> Uložit
+        </button>
+        <a n:href="default" class="btn btn-outline-secondary">Zrušit</a>
+    </div>
+</form>
+
+</div>
+</div>
+</div>
+</div>
+{/block}
